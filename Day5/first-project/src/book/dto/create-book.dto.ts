@@ -1,4 +1,22 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  ValidateNested,
+} from 'class-validator';
+
+class AuthorDto {
+  @IsNotEmpty({
+    message: 'Tên của tác giả không để trống',
+  })
+  firstName: string;
+
+  @IsNotEmpty({
+    message: 'Họ của tác giả không để trống',
+  })
+  lastName: string;
+}
 
 export class CreateBookDto {
   @IsNotEmpty({
@@ -6,10 +24,12 @@ export class CreateBookDto {
   })
   title: string;
 
-  @IsNotEmpty({
-    message: 'Tên tác giả không được bỏ trống',
+  @IsObject({
+    message: 'Tác giả phải là 1 đối tượng',
   })
-  author: string;
+  @ValidateNested({ each: true })
+  @Type(() => AuthorDto)
+  author: AuthorDto;
 
   @IsNotEmpty({
     message: 'Mô tả không được bỏ trống',
